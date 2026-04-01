@@ -679,6 +679,18 @@
       <svg id="logo-rebel" class="logo-hidden" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
         <path d="M37.035,5.621L31,2l4.715,5.196C39.15,11.074,41,14.744,41,19c0,5.732-3.358,8-7,8c-4.851,0-6-3.783-6-5 c0-3.914,3.548-7.157,6.758-8.288l1.59-0.559l-4.697-4.511c-0.504,0.322-0.856,0.564-0.856,0.564 c-0.418,0.286-1.04,0.766-1.776,1.501c0,0-1.098,1.23-2.02,2.293c0-2,0.357-3.296,0.357-3.296c0.357-1.15,1.036-2.068,1.589-2.67 l0.711-0.704L25.029,2L25,2.025L24.971,2l-4.628,4.328l0.71,0.705c0.552,0.602,1.232,1.52,1.589,2.67C22.643,9.704,23,11,23,13 c-1.172-1.516-2.02-2.293-2.02-2.293c-0.735-0.735-1.357-1.214-1.776-1.501c0,0-0.352-0.242-0.856-0.564l-4.697,4.511l1.59,0.559 C18.452,14.843,22,18.086,22,22c0,1.217-1.149,5-6,5c-3.642,0-7-2.268-7-8c0-4.256,1.85-7.926,5.285-11.804L19,2l-6.035,3.621 C6.467,9.464,2.471,15.942,2,23.462v1.72C2,37.764,12.318,48,25,48c12.682,0,23-10.236,23-22.818v-1.72 C47.529,15.942,43.533,9.464,37.035,5.621z"/>
       </svg>
+      <!-- Mandalorian Mythosaur Skull -->
+      <svg id="logo-mandalorian" class="logo-hidden" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 40 40 Q 32 28 20 12 Q 17 8 14 10 Q 10 14 14 24 Q 18 32 28 40 Q 32 43 36 44 Z"/>
+        <path d="M 60 40 Q 68 28 80 12 Q 83 8 86 10 Q 90 14 86 24 Q 82 32 72 40 Q 68 43 64 44 Z"/>
+        <path d="M 32 46 C 28 46 26 50 26 56 L 26 60 C 26 62 28 64 30 64 L 70 64 C 72 64 74 62 74 60 L 74 56 C 74 50 72 46 68 46 C 64 42 58 38 50 38 C 42 38 36 42 32 46 Z"/>
+        <rect x="30" y="50" width="40" height="5" rx="1" fill="var(--bg-dark)"/>
+        <rect x="45" y="50" width="10" height="14" rx="1" fill="var(--bg-dark)"/>
+        <path d="M 36 64 L 36 76 Q 36 84 50 84 Q 64 84 64 76 L 64 64 Z"/>
+        <rect x="45" y="64" width="10" height="10" fill="var(--bg-dark)"/>
+        <path d="M 34 64 L 24 82 Q 23 85 26 84 L 36 74 L 36 64 Z"/>
+        <path d="M 66 64 L 76 82 Q 77 85 74 84 L 64 74 L 64 64 Z"/>
+      </svg>
     </div>
   </div>
 
@@ -775,6 +787,40 @@
       scan2: 'IMP TRACKER',
       bottomLeft: 'may the force be with you',
       bottomRight: 'hope endures',
+    },
+    mandalorian: {
+      colors: {
+        '--primary': '#4a9a4a',
+        '--primary-bright': '#6abf6a',
+        '--primary-dim': '#2d7a2d',
+        '--primary-faint': '#0a1f0a',
+        '--primary-glow': 'rgba(74, 154, 74, 0.15)',
+        '--primary-glow-strong': 'rgba(74, 154, 74, 0.3)',
+        '--glow-rgb': '74, 154, 74',
+        '--border': '#0a1a0a',
+        '--border-bright': '#1a3a1a',
+      },
+      title: 'Mandalorian Clock',
+      topAurebesh: 'mandalorian',
+      topLabel: 'MANDALORIAN COVERT \u2014 BOUNTY OPERATIONS',
+      classification: '\u25C6 THIS IS THE WAY \u25C6',
+      toggleLabel: 'MANDO',
+      powerLabel: 'SYS POWER',
+      bars: ['MAIN', 'AUX', 'BSKR', 'COMM'],
+      sector: 'J-19 NEVARRO',
+      unitLabel: 'COVERT',
+      unitAurebesh: 'covert',
+      unitInfo: 'CLAN MUDHORN<br>ARMORER: STANDING<br>PERS: CLASSIFIED<br>STATUS: HIDDEN',
+      comms: [
+        { name: 'HOLONET', status: 'PASSIVE' },
+        { name: 'GUILD NET', status: 'ACTIVE' },
+        { name: 'SUBSPACE', status: 'ENCRYPTED' },
+        { name: 'IMP FREQ', status: 'SCANNED' },
+      ],
+      scan1: 'BOUNTY SCAN',
+      scan2: 'THREAT MONITOR',
+      bottomLeft: 'this is the way',
+      bottomRight: 'weapons are my religion',
     }
   };
 
@@ -826,15 +872,15 @@
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
     // Swap faction logos
-    const logoImp = document.getElementById('logo-imperial');
-    const logoReb = document.getElementById('logo-rebel');
-    if (themeName === 'rebel') {
-      logoImp.classList.add('logo-hidden');
-      logoReb.classList.remove('logo-hidden');
-    } else {
-      logoReb.classList.add('logo-hidden');
-      logoImp.classList.remove('logo-hidden');
-    }
+    const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian'];
+    logos.forEach(id => {
+      const el = document.getElementById(id);
+      if (id === 'logo-' + themeName) {
+        el.classList.remove('logo-hidden');
+      } else {
+        el.classList.add('logo-hidden');
+      }
+    });
 
     // Update URL without reload
     const url = new URL(window.location);
@@ -842,8 +888,11 @@
     history.replaceState(null, '', url);
   }
 
+  const THEME_ORDER = ['imperial', 'rebel', 'mandalorian'];
   function toggleTheme() {
-    applyTheme(currentTheme === 'imperial' ? 'rebel' : 'imperial');
+    const idx = THEME_ORDER.indexOf(currentTheme);
+    const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];
+    applyTheme(next);
   }
 
   // ═══════════════════════════════════════════
@@ -955,7 +1004,7 @@
   // ═══════════════════════════════════════════
   // Read theme from URL param
   const params = new URLSearchParams(window.location.search);
-  const startTheme = params.get('theme') === 'rebel' ? 'rebel' : 'imperial';
+  const startTheme = THEMES[params.get('theme')] ? params.get('theme') : 'imperial';
   applyTheme(startTheme);
 
   // Toggle button
