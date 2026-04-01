@@ -523,31 +523,24 @@
     opacity: 0;
     pointer-events: none;
   }
-  /* CRT glitch transition */
-  @keyframes crt-glitch-out {
-    0%   { opacity: 0.25; transform: translate(0,0) scaleY(1); filter: brightness(1); }
-    15%  { opacity: 0.6; transform: translate(4px,-2px) scaleY(1.02); filter: brightness(2.5); }
-    30%  { opacity: 0.1; transform: translate(-3px,1px) scaleY(0.95); filter: brightness(0.3); }
-    45%  { opacity: 0.8; transform: translate(2px,3px) scaleY(1.08); filter: brightness(3); }
-    60%  { opacity: 0.05; transform: translate(0,0) scaleY(0.4); filter: brightness(0.2); }
-    80%  { opacity: 0; transform: translate(0,0) scaleY(0.02); filter: brightness(5); }
-    100% { opacity: 0; transform: translate(0,0) scaleY(0); filter: brightness(0); }
+  /* CRT power-off / power-on transition */
+  @keyframes crt-off {
+    0%   { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+    40%  { opacity: 1; transform: scaleY(0.04) scaleX(1.1); filter: brightness(3); }
+    100% { opacity: 0; transform: scaleY(0) scaleX(0); filter: brightness(6); }
   }
-  @keyframes crt-glitch-in {
-    0%   { opacity: 0; transform: translate(0,0) scaleY(0); filter: brightness(5); }
-    20%  { opacity: 0.5; transform: translate(0,0) scaleY(0.03); filter: brightness(4); }
-    35%  { opacity: 0.1; transform: translate(-3px,2px) scaleY(0.6); filter: brightness(0.3); }
-    50%  { opacity: 0.7; transform: translate(3px,-1px) scaleY(1.1); filter: brightness(2.5); }
-    65%  { opacity: 0.15; transform: translate(-2px,0) scaleY(0.92); filter: brightness(0.5); }
-    80%  { opacity: 0.5; transform: translate(1px,1px) scaleY(1.03); filter: brightness(1.8); }
-    90%  { opacity: 0.3; transform: translate(0,0) scaleY(0.98); filter: brightness(1.2); }
-    100% { opacity: 1; transform: translate(0,0) scaleY(1); filter: brightness(1); }
+  @keyframes crt-on {
+    0%   { opacity: 0; transform: scaleY(0) scaleX(0); filter: brightness(6); }
+    50%  { opacity: 1; transform: scaleY(0.04) scaleX(1.1); filter: brightness(3); }
+    70%  { opacity: 1; transform: scaleY(0.9) scaleX(1.02); filter: brightness(1.4); }
+    85%  { opacity: 1; transform: scaleY(1.03) scaleX(0.98); filter: brightness(1.1); }
+    100% { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
   }
   .faction-logo .logo-glitch-out {
-    animation: crt-glitch-out 0.35s ease-in forwards;
+    animation: crt-off 0.3s ease-in forwards;
   }
   .faction-logo .logo-glitch-in {
-    animation: crt-glitch-in 0.45s ease-out forwards;
+    animation: crt-on 0.4s ease-out forwards;
   }
 </style>
 </head>
