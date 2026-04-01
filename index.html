@@ -523,52 +523,38 @@
     opacity: 0;
     pointer-events: none;
   }
-  /* Static noise overlay */
-  .faction-logo::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 150px 150px;
-    mix-blend-mode: screen;
-    opacity: 0;
-    pointer-events: none;
-    z-index: 10;
-    transition: opacity 0.05s;
-  }
-  .faction-logo.static-active::after {
-    opacity: 0.8;
-    animation: static-scroll 0.08s steps(4) infinite;
-  }
-  @keyframes static-scroll {
-    0%   { background-position: 0 0; }
-    25%  { background-position: -30px 50px; }
-    50%  { background-position: 60px -20px; }
-    75%  { background-position: -40px -60px; }
-    100% { background-position: 20px 30px; }
-  }
+  /* Broadcast static transition — no overlay, just logo flicker */
   @keyframes signal-out {
-    0%   { opacity: 1; filter: brightness(1); }
-    30%  { opacity: 0.7; filter: brightness(1.6); }
-    50%  { opacity: 0.3; filter: brightness(2); }
-    70%  { opacity: 0.6; filter: brightness(1.3); }
-    85%  { opacity: 0.1; filter: brightness(2.5); }
-    100% { opacity: 0; filter: brightness(1); }
+    0%   { opacity: 1; }
+    8%   { opacity: 0.2; }
+    16%  { opacity: 0.8; }
+    24%  { opacity: 0.1; }
+    35%  { opacity: 0.6; }
+    45%  { opacity: 0; }
+    55%  { opacity: 0.4; }
+    65%  { opacity: 0; }
+    80%  { opacity: 0.15; }
+    100% { opacity: 0; }
   }
   @keyframes signal-in {
-    0%   { opacity: 0; filter: brightness(2.5); }
-    15%  { opacity: 0.4; filter: brightness(2); }
-    30%  { opacity: 0.1; filter: brightness(1.5); }
-    50%  { opacity: 0.6; filter: brightness(1.8); }
-    70%  { opacity: 0.3; filter: brightness(1.3); }
-    85%  { opacity: 0.8; filter: brightness(1.1); }
-    100% { opacity: 1; filter: brightness(1); }
+    0%   { opacity: 0; }
+    10%  { opacity: 0.15; }
+    20%  { opacity: 0; }
+    30%  { opacity: 0.4; }
+    40%  { opacity: 0; }
+    50%  { opacity: 0.55; }
+    58%  { opacity: 0.2; }
+    66%  { opacity: 0.75; }
+    74%  { opacity: 0.4; }
+    82%  { opacity: 0.9; }
+    90%  { opacity: 0.7; }
+    100% { opacity: 1; }
   }
   .faction-logo .logo-signal-out {
-    animation: signal-out 0.4s ease-in forwards;
+    animation: signal-out 0.4s steps(1) forwards;
   }
   .faction-logo .logo-signal-in {
-    animation: signal-in 0.5s ease-out forwards;
+    animation: signal-in 0.6s steps(1) forwards;
   }
 </style>
 </head>
@@ -914,12 +900,9 @@
     document.getElementById('bottom-left-aurebesh').textContent = theme.bottomLeft;
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
-    // Swap faction logos with static noise transition
-    const logoContainer = document.getElementById('faction-logo');
+    // Swap faction logos with broadcast static flicker
     const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian'];
     const activeId = 'logo-' + themeName;
-    // Turn on static noise
-    logoContainer.classList.add('static-active');
     logos.forEach(id => {
       const el = document.getElementById(id);
       el.classList.remove('logo-signal-out', 'logo-signal-in', 'logo-hidden');
@@ -935,14 +918,12 @@
         }
       }
     });
-    // New logo emerges from the static
     const newLogo = document.getElementById(activeId);
     setTimeout(() => {
       newLogo.classList.remove('logo-hidden');
       newLogo.classList.add('logo-signal-in');
       newLogo.addEventListener('animationend', () => {
         newLogo.classList.remove('logo-signal-in');
-        logoContainer.classList.remove('static-active');
       }, { once: true });
     }, 350);
 
