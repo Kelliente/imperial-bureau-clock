@@ -511,23 +511,43 @@
     height: 100%;
     fill: var(--primary-dim);
     color: var(--primary-dim);
-    transition: fill 0.8s ease, color 0.8s ease, opacity 0.5s ease, transform 0.5s ease;
+    transition: fill 0.8s ease, color 0.8s ease;
     position: absolute;
     top: 0; left: 0;
     opacity: 1;
-    transform: scale(1) rotate(0deg);
   }
   .faction-logo:hover {
     opacity: 0.5;
   }
   .faction-logo .logo-hidden {
     opacity: 0;
-    transform: scale(0.3) rotate(-90deg);
     pointer-events: none;
   }
-  .faction-logo .logo-entering {
-    opacity: 1;
-    transform: scale(1) rotate(0deg);
+  /* CRT glitch transition */
+  @keyframes crt-glitch-out {
+    0%   { opacity: 0.25; transform: translate(0,0) scaleY(1); filter: brightness(1); }
+    15%  { opacity: 0.6; transform: translate(4px,-2px) scaleY(1.02); filter: brightness(2.5); }
+    30%  { opacity: 0.1; transform: translate(-3px,1px) scaleY(0.95); filter: brightness(0.3); }
+    45%  { opacity: 0.8; transform: translate(2px,3px) scaleY(1.08); filter: brightness(3); }
+    60%  { opacity: 0.05; transform: translate(0,0) scaleY(0.4); filter: brightness(0.2); }
+    80%  { opacity: 0; transform: translate(0,0) scaleY(0.02); filter: brightness(5); }
+    100% { opacity: 0; transform: translate(0,0) scaleY(0); filter: brightness(0); }
+  }
+  @keyframes crt-glitch-in {
+    0%   { opacity: 0; transform: translate(0,0) scaleY(0); filter: brightness(5); }
+    20%  { opacity: 0.5; transform: translate(0,0) scaleY(0.03); filter: brightness(4); }
+    35%  { opacity: 0.1; transform: translate(-3px,2px) scaleY(0.6); filter: brightness(0.3); }
+    50%  { opacity: 0.7; transform: translate(3px,-1px) scaleY(1.1); filter: brightness(2.5); }
+    65%  { opacity: 0.15; transform: translate(-2px,0) scaleY(0.92); filter: brightness(0.5); }
+    80%  { opacity: 0.5; transform: translate(1px,1px) scaleY(1.03); filter: brightness(1.8); }
+    90%  { opacity: 0.3; transform: translate(0,0) scaleY(0.98); filter: brightness(1.2); }
+    100% { opacity: 1; transform: translate(0,0) scaleY(1); filter: brightness(1); }
+  }
+  .faction-logo .logo-glitch-out {
+    animation: crt-glitch-out 0.35s ease-in forwards;
+  }
+  .faction-logo .logo-glitch-in {
+    animation: crt-glitch-in 0.45s ease-out forwards;
   }
 </style>
 </head>
@@ -873,20 +893,34 @@
     document.getElementById('bottom-left-aurebesh').textContent = theme.bottomLeft;
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
-    // Swap faction logos with animation
+    // Swap faction logos with CRT glitch animation
     const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian'];
+    const activeId = 'logo-' + themeName;
     logos.forEach(id => {
       const el = document.getElementById(id);
-      if (id === 'logo-' + themeName) {
-        el.classList.remove('logo-hidden');
-        // Force reflow then add entering class for spin-in
-        void el.offsetWidth;
-        el.classList.add('logo-entering');
-      } else {
-        el.classList.remove('logo-entering');
-        el.classList.add('logo-hidden');
+      el.classList.remove('logo-glitch-out', 'logo-glitch-in', 'logo-hidden');
+      if (id !== activeId) {
+        // Glitch out the old logo
+        if (el.style.display !== 'none' && !el.classList.contains('logo-hidden')) {
+          el.classList.add('logo-glitch-out');
+          el.addEventListener('animationend', () => {
+            el.classList.remove('logo-glitch-out');
+            el.classList.add('logo-hidden');
+          }, { once: true });
+        } else {
+          el.classList.add('logo-hidden');
+        }
       }
     });
+    // Glitch in the new logo after the old one finishes
+    const newLogo = document.getElementById(activeId);
+    setTimeout(() => {
+      newLogo.classList.remove('logo-hidden');
+      newLogo.classList.add('logo-glitch-in');
+      newLogo.addEventListener('animationend', () => {
+        newLogo.classList.remove('logo-glitch-in');
+      }, { once: true });
+    }, 300);
 
     // Update URL without reload
     const url = new URL(window.location);
