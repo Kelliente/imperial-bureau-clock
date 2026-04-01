@@ -523,24 +523,52 @@
     opacity: 0;
     pointer-events: none;
   }
-  /* CRT power-off / power-on transition */
-  @keyframes crt-off {
-    0%   { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
-    40%  { opacity: 1; transform: scaleY(0.04) scaleX(1.1); filter: brightness(3); }
-    100% { opacity: 0; transform: scaleY(0) scaleX(0); filter: brightness(6); }
+  /* Static noise overlay */
+  .faction-logo::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 150px 150px;
+    mix-blend-mode: screen;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+    transition: opacity 0.05s;
   }
-  @keyframes crt-on {
-    0%   { opacity: 0; transform: scaleY(0) scaleX(0); filter: brightness(6); }
-    50%  { opacity: 1; transform: scaleY(0.04) scaleX(1.1); filter: brightness(3); }
-    70%  { opacity: 1; transform: scaleY(0.9) scaleX(1.02); filter: brightness(1.4); }
-    85%  { opacity: 1; transform: scaleY(1.03) scaleX(0.98); filter: brightness(1.1); }
-    100% { opacity: 1; transform: scaleY(1) scaleX(1); filter: brightness(1); }
+  .faction-logo.static-active::after {
+    opacity: 0.8;
+    animation: static-scroll 0.08s steps(4) infinite;
   }
-  .faction-logo .logo-glitch-out {
-    animation: crt-off 0.3s ease-in forwards;
+  @keyframes static-scroll {
+    0%   { background-position: 0 0; }
+    25%  { background-position: -30px 50px; }
+    50%  { background-position: 60px -20px; }
+    75%  { background-position: -40px -60px; }
+    100% { background-position: 20px 30px; }
   }
-  .faction-logo .logo-glitch-in {
-    animation: crt-on 0.4s ease-out forwards;
+  @keyframes signal-out {
+    0%   { opacity: 1; filter: brightness(1); }
+    30%  { opacity: 0.7; filter: brightness(1.6); }
+    50%  { opacity: 0.3; filter: brightness(2); }
+    70%  { opacity: 0.6; filter: brightness(1.3); }
+    85%  { opacity: 0.1; filter: brightness(2.5); }
+    100% { opacity: 0; filter: brightness(1); }
+  }
+  @keyframes signal-in {
+    0%   { opacity: 0; filter: brightness(2.5); }
+    15%  { opacity: 0.4; filter: brightness(2); }
+    30%  { opacity: 0.1; filter: brightness(1.5); }
+    50%  { opacity: 0.6; filter: brightness(1.8); }
+    70%  { opacity: 0.3; filter: brightness(1.3); }
+    85%  { opacity: 0.8; filter: brightness(1.1); }
+    100% { opacity: 1; filter: brightness(1); }
+  }
+  .faction-logo .logo-signal-out {
+    animation: signal-out 0.4s ease-in forwards;
+  }
+  .faction-logo .logo-signal-in {
+    animation: signal-in 0.5s ease-out forwards;
   }
 </style>
 </head>
@@ -886,18 +914,20 @@
     document.getElementById('bottom-left-aurebesh').textContent = theme.bottomLeft;
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
-    // Swap faction logos with CRT glitch animation
+    // Swap faction logos with static noise transition
+    const logoContainer = document.getElementById('faction-logo');
     const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian'];
     const activeId = 'logo-' + themeName;
+    // Turn on static noise
+    logoContainer.classList.add('static-active');
     logos.forEach(id => {
       const el = document.getElementById(id);
-      el.classList.remove('logo-glitch-out', 'logo-glitch-in', 'logo-hidden');
+      el.classList.remove('logo-signal-out', 'logo-signal-in', 'logo-hidden');
       if (id !== activeId) {
-        // Glitch out the old logo
-        if (el.style.display !== 'none' && !el.classList.contains('logo-hidden')) {
-          el.classList.add('logo-glitch-out');
+        if (!el.classList.contains('logo-hidden')) {
+          el.classList.add('logo-signal-out');
           el.addEventListener('animationend', () => {
-            el.classList.remove('logo-glitch-out');
+            el.classList.remove('logo-signal-out');
             el.classList.add('logo-hidden');
           }, { once: true });
         } else {
@@ -905,15 +935,16 @@
         }
       }
     });
-    // Glitch in the new logo after the old one finishes
+    // New logo emerges from the static
     const newLogo = document.getElementById(activeId);
     setTimeout(() => {
       newLogo.classList.remove('logo-hidden');
-      newLogo.classList.add('logo-glitch-in');
+      newLogo.classList.add('logo-signal-in');
       newLogo.addEventListener('animationend', () => {
-        newLogo.classList.remove('logo-glitch-in');
+        newLogo.classList.remove('logo-signal-in');
+        logoContainer.classList.remove('static-active');
       }, { once: true });
-    }, 300);
+    }, 350);
 
     // Update URL without reload
     const url = new URL(window.location);
