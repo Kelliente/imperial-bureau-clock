@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
-<title>Imperial Bureau Clock</title>
+<title>Galactic Clock</title>
 <link href="https://fonts.cdnfonts.com/css/aurebesh" rel="stylesheet">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;500;700;900&display=swap');
@@ -13,12 +13,14 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   :root {
-    --amber: #ff9b21;
-    --amber-bright: #ffb84d;
-    --amber-dim: #cc7a10;
-    --amber-faint: #4a2e00;
-    --amber-glow: rgba(255, 155, 33, 0.15);
-    --amber-glow-strong: rgba(255, 155, 33, 0.3);
+    /* Theme colors — overridden by JS */
+    --primary: #ff9b21;
+    --primary-bright: #ffb84d;
+    --primary-dim: #cc7a10;
+    --primary-faint: #4a2e00;
+    --primary-glow: rgba(255, 155, 33, 0.15);
+    --primary-glow-strong: rgba(255, 155, 33, 0.3);
+    --glow-rgb: 255, 155, 33;
     --bg-dark: #0a0a0a;
     --bg-panel: #0d0d0d;
     --border: #1a1200;
@@ -31,8 +33,9 @@
     overflow: hidden;
     background: var(--bg-dark);
     font-family: 'Share Tech Mono', monospace;
-    color: var(--amber);
+    color: var(--primary);
     position: relative;
+    transition: color 0.8s ease;
   }
 
   /* Scanline overlay */
@@ -66,16 +69,17 @@
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     background-image:
-      linear-gradient(var(--amber-faint) 1px, transparent 1px),
-      linear-gradient(90deg, var(--amber-faint) 1px, transparent 1px);
+      linear-gradient(var(--primary-faint) 1px, transparent 1px),
+      linear-gradient(90deg, var(--primary-faint) 1px, transparent 1px);
     background-size: 40px 40px;
     opacity: 0.25;
+    transition: background-image 0.8s ease;
   }
 
   .frame {
     position: absolute;
     top: 12px; left: 12px; right: 12px; bottom: 12px;
-    border: 1px solid var(--amber-dim);
+    border: 1px solid var(--primary-dim);
     border-radius: 2px;
   }
 
@@ -88,7 +92,7 @@
   /* Corner accents */
   .corner { position: absolute; width: 20px; height: 20px; }
   .corner::before, .corner::after {
-    content: ''; position: absolute; background: var(--amber-dim);
+    content: ''; position: absolute; background: var(--primary-dim);
   }
   .corner::before { width: 20px; height: 1px; }
   .corner::after { width: 1px; height: 20px; }
@@ -149,13 +153,36 @@
     font-size: 10px;
     letter-spacing: 6px;
     text-transform: uppercase;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     animation: pulse-slow 3s ease-in-out infinite;
   }
 
   @keyframes pulse-slow {
     0%, 100% { opacity: 0.4; }
     50% { opacity: 0.8; }
+  }
+
+  /* Theme toggle */
+  .theme-toggle {
+    position: fixed;
+    top: 18px;
+    right: 50px;
+    z-index: 200;
+    cursor: pointer;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--primary-dim);
+    background: none;
+    border: 1px solid var(--border-bright);
+    padding: 4px 10px;
+    opacity: 0.4;
+    transition: opacity 0.3s, color 0.8s, border-color 0.8s;
+  }
+  .theme-toggle:hover {
+    opacity: 1;
+    color: var(--primary);
   }
 
   /* Left panel */
@@ -177,7 +204,7 @@
     font-size: 9px;
     letter-spacing: 3px;
     text-transform: uppercase;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     padding-bottom: 4px;
     border-bottom: 1px solid var(--border);
   }
@@ -190,12 +217,12 @@
 
   .readout {
     font-size: 13px;
-    color: var(--amber);
+    color: var(--primary);
     line-height: 1.6;
   }
 
   .readout-dim {
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     font-size: 11px;
   }
 
@@ -209,7 +236,7 @@
   .bar-label {
     font-size: 9px;
     width: 30px;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
   }
 
   .bar {
@@ -222,20 +249,20 @@
 
   .bar-fill {
     height: 100%;
-    background: var(--amber-dim);
-    transition: width 2s ease;
+    background: var(--primary-dim);
+    transition: width 2s ease, background 0.8s ease;
   }
 
   .bar-fill.active {
-    background: var(--amber);
-    box-shadow: 0 0 6px var(--amber-glow-strong);
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary-glow-strong);
   }
 
   .bar-value {
     font-size: 9px;
     width: 32px;
     text-align: right;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
   }
 
   /* Center - main clock */
@@ -252,12 +279,13 @@
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(60px, 9.5vw, 120px);
     font-weight: 700;
-    color: var(--amber-bright);
+    color: var(--primary-bright);
     text-shadow:
-      0 0 20px var(--amber-glow-strong),
-      0 0 60px rgba(255, 155, 33, 0.1);
+      0 0 20px var(--primary-glow-strong),
+      0 0 60px rgba(var(--glow-rgb), 0.1);
     letter-spacing: 8px;
     line-height: 1;
+    transition: color 0.8s ease, text-shadow 0.8s ease;
   }
 
   .time-separator {
@@ -273,7 +301,7 @@
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(18px, 2.2vw, 28px);
     font-weight: 400;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     margin-top: -8px;
     letter-spacing: 4px;
   }
@@ -282,7 +310,7 @@
     font-family: 'Orbitron', sans-serif;
     font-size: clamp(14px, 1.8vw, 22px);
     font-weight: 400;
-    color: var(--amber);
+    color: var(--primary);
     letter-spacing: 6px;
     margin-top: 12px;
   }
@@ -291,7 +319,7 @@
     font-size: 13px;
     letter-spacing: 8px;
     text-transform: uppercase;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     margin-top: 4px;
   }
 
@@ -315,13 +343,13 @@
   .accent-line {
     flex: 1;
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--amber-dim), transparent);
+    background: linear-gradient(90deg, transparent, var(--primary-dim), transparent);
   }
 
   .accent-diamond {
     width: 6px;
     height: 6px;
-    background: var(--amber-dim);
+    background: var(--primary-dim);
     transform: rotate(45deg);
   }
 
@@ -345,14 +373,15 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--amber);
-    box-shadow: 0 0 6px var(--amber);
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
     margin-right: 8px;
     display: inline-block;
+    transition: background 0.8s ease, box-shadow 0.8s ease;
   }
 
   .status-dot.dim {
-    background: var(--amber-dim);
+    background: var(--primary-dim);
     box-shadow: none;
   }
 
@@ -363,13 +392,13 @@
 
   .coord-value {
     font-size: 12px;
-    color: var(--amber);
+    color: var(--primary);
     font-variant-numeric: tabular-nums;
   }
 
   .hex-block {
     font-size: 10px;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     line-height: 1.7;
     opacity: 0.5;
     word-break: break-all;
@@ -399,7 +428,7 @@
     font-size: 9px;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     white-space: nowrap;
   }
 
@@ -417,7 +446,7 @@
     left: -20%;
     width: 20%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, var(--amber), transparent);
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
     animation: sweep 4s linear infinite;
   }
 
@@ -434,7 +463,7 @@
 
   .bottom-readout {
     font-size: 10px;
-    color: var(--amber-dim);
+    color: var(--primary-dim);
     letter-spacing: 2px;
     white-space: nowrap;
   }
@@ -459,17 +488,19 @@
 
   /* Breathing glow on frame */
   .frame {
-    box-shadow: inset 0 0 30px rgba(255, 155, 33, 0.02);
+    box-shadow: inset 0 0 30px rgba(var(--glow-rgb), 0.02);
     animation: frame-glow 6s ease-in-out infinite;
   }
 
   @keyframes frame-glow {
-    0%, 100% { box-shadow: inset 0 0 30px rgba(255, 155, 33, 0.02); }
-    50% { box-shadow: inset 0 0 40px rgba(255, 155, 33, 0.04); }
+    0%, 100% { box-shadow: inset 0 0 30px rgba(var(--glow-rgb), 0.02); }
+    50% { box-shadow: inset 0 0 40px rgba(var(--glow-rgb), 0.04); }
   }
 </style>
 </head>
 <body>
+
+<button class="theme-toggle" id="theme-toggle" title="Switch faction">IMPERIAL</button>
 
 <div class="grid-bg"></div>
 <div class="frame"><div class="frame-inner"></div></div>
@@ -481,57 +512,57 @@
 <div class="main-container">
   <!-- TOP BAR -->
   <div class="top-bar">
-    <span class="top-label-aurebesh aurebesh">imperial bureau</span>
-    <span class="top-label">IMPERIAL SYSTEMS BUREAU &mdash; SECTOR MONITORING</span>
-    <span class="classification">&#9670; CLASSIFIED &#9670;</span>
+    <span class="top-label-aurebesh aurebesh" id="top-aurebesh">imperial bureau</span>
+    <span class="top-label" id="top-label">IMPERIAL SYSTEMS BUREAU &mdash; SECTOR MONITORING</span>
+    <span class="classification" id="classification">&#9670; CLASSIFIED &#9670;</span>
   </div>
 
   <!-- LEFT PANEL -->
   <div class="left-panel">
     <div class="panel-section">
-      <div class="panel-label">SYS POWER <span class="aurebesh">power</span></div>
+      <div class="panel-label" id="power-label">SYS POWER <span class="aurebesh">power</span></div>
       <div class="bar-container">
-        <span class="bar-label">MAIN</span>
+        <span class="bar-label" id="bar1-label">MAIN</span>
         <div class="bar"><div class="bar-fill active" style="width: 94%"></div></div>
         <span class="bar-value">94%</span>
       </div>
       <div class="bar-container">
-        <span class="bar-label">AUX</span>
+        <span class="bar-label" id="bar2-label">AUX</span>
         <div class="bar"><div class="bar-fill" style="width: 67%"></div></div>
         <span class="bar-value">67%</span>
       </div>
       <div class="bar-container">
-        <span class="bar-label">SHLD</span>
+        <span class="bar-label" id="bar3-label">SHLD</span>
         <div class="bar"><div class="bar-fill active" style="width: 100%"></div></div>
         <span class="bar-value">100%</span>
       </div>
       <div class="bar-container">
-        <span class="bar-label">COMM</span>
+        <span class="bar-label" id="bar4-label">COMM</span>
         <div class="bar"><div class="bar-fill" style="width: 82%"></div></div>
         <span class="bar-value">82%</span>
       </div>
     </div>
 
     <div class="panel-section">
-      <div class="panel-label">COORDINATES <span class="aurebesh">location</span></div>
+      <div class="panel-label" id="coord-label">COORDINATES <span class="aurebesh">location</span></div>
       <div class="readout" id="coords">
-        <span class="readout-dim">LAT</span> &thinsp;41.7637°N<br>
-        <span class="readout-dim">LON</span> 124.5092°E<br>
-        <span class="readout-dim">SEC</span> K-16 OUTER RIM
+        <span class="readout-dim">LAT</span> &thinsp;41.7637&deg;N<br>
+        <span class="readout-dim">LON</span> 124.5092&deg;E<br>
+        <span class="readout-dim">SEC</span> <span id="sector-text">K-16 OUTER RIM</span>
       </div>
     </div>
 
     <div class="panel-section">
       <div class="panel-label">SURFACE TEMP <span class="aurebesh">weather</span></div>
       <div class="readout" id="weather-readout">
-        <span style="font-size: 34px; color: var(--amber-bright);" id="temp-value">--°F</span><br>
+        <span style="font-size: 34px; color: var(--primary-bright);" id="temp-value">--&deg;F</span><br>
         <span class="readout-dim" id="weather-desc">SCANNING...</span>
       </div>
     </div>
 
     <div class="panel-section">
-      <div class="panel-label">GARRISON <span class="aurebesh">garrison</span></div>
-      <div class="readout readout-dim" style="font-size: 11px; line-height: 1.7;">
+      <div class="panel-label" id="unit-label">GARRISON <span class="aurebesh" id="unit-aurebesh">garrison</span></div>
+      <div class="readout readout-dim" style="font-size: 11px; line-height: 1.7;" id="unit-info">
         UNIT ISB-7742<br>
         CMDR: CLASSIFIED<br>
         PERS: 2,847<br>
@@ -569,11 +600,11 @@
   <!-- RIGHT PANEL -->
   <div class="right-panel">
     <div class="panel-section">
-      <div class="panel-label">COMM STATUS <span class="aurebesh">comms</span></div>
-      <div class="status-item"><span><span class="status-dot"></span>HOLONET</span><span class="readout-dim">LINKED</span></div>
-      <div class="status-item"><span><span class="status-dot"></span>IMPERIAL NET</span><span class="readout-dim">SECURE</span></div>
-      <div class="status-item"><span><span class="status-dot dim"></span>SUBSPACE</span><span class="readout-dim">STANDBY</span></div>
-      <div class="status-item"><span><span class="status-dot off"></span>REBEL FREQ</span><span class="readout-dim">JAMMED</span></div>
+      <div class="panel-label" id="comm-label">COMM STATUS <span class="aurebesh">comms</span></div>
+      <div class="status-item"><span><span class="status-dot"></span><span id="comm1-name">HOLONET</span></span><span class="readout-dim" id="comm1-status">LINKED</span></div>
+      <div class="status-item"><span><span class="status-dot"></span><span id="comm2-name">IMPERIAL NET</span></span><span class="readout-dim" id="comm2-status">SECURE</span></div>
+      <div class="status-item"><span><span class="status-dot dim"></span><span id="comm3-name">SUBSPACE</span></span><span class="readout-dim" id="comm3-status">STANDBY</span></div>
+      <div class="status-item"><span><span class="status-dot off"></span><span id="comm4-name">REBEL FREQ</span></span><span class="readout-dim" id="comm4-status">JAMMED</span></div>
     </div>
 
     <div class="panel-section">
@@ -596,7 +627,7 @@
     </div>
 
     <div class="panel-section">
-      <div class="panel-label">ENCRYPTION <span class="aurebesh">cipher</span></div>
+      <div class="panel-label" id="crypto-label">ENCRYPTION <span class="aurebesh">cipher</span></div>
       <div class="hex-block" id="hex-block">
         A7F2 3B0C E9D1 48FA<br>
         C612 7A9E 0B3D F584<br>
@@ -616,9 +647,9 @@
 
   <!-- BOTTOM BAR -->
   <div class="bottom-bar">
-    <span class="bottom-aurebesh aurebesh">scanning all frequencies</span>
+    <span class="bottom-aurebesh aurebesh" id="bottom-left-aurebesh">scanning all frequencies</span>
     <div class="scan-bar-container">
-      <span class="scan-bar-label">SECTOR SCAN</span>
+      <span class="scan-bar-label" id="scan1-label">SECTOR SCAN</span>
       <div class="scan-bar">
         <div class="scan-sweep"></div>
         <div class="scan-sweep scan-sweep-2"></div>
@@ -626,17 +657,150 @@
     </div>
     <span class="bottom-readout" id="uptime">UPTIME 4,217:33:08</span>
     <div class="scan-bar-container">
-      <span class="scan-bar-label">FREQ MONITOR</span>
+      <span class="scan-bar-label" id="scan2-label">FREQ MONITOR</span>
       <div class="scan-bar">
         <div class="scan-sweep" style="animation-duration: 3s; animation-delay: 1s;"></div>
       </div>
     </div>
-    <span class="bottom-aurebesh aurebesh">empire forever</span>
+    <span class="bottom-aurebesh aurebesh" id="bottom-right-aurebesh">empire forever</span>
   </div>
 </div>
 
 <script>
-  // Star Wars day names
+  // ═══════════════════════════════════════════
+  // THEME DEFINITIONS
+  // ═══════════════════════════════════════════
+  const THEMES = {
+    imperial: {
+      colors: {
+        '--primary': '#ff9b21',
+        '--primary-bright': '#ffb84d',
+        '--primary-dim': '#cc7a10',
+        '--primary-faint': '#4a2e00',
+        '--primary-glow': 'rgba(255, 155, 33, 0.15)',
+        '--primary-glow-strong': 'rgba(255, 155, 33, 0.3)',
+        '--glow-rgb': '255, 155, 33',
+        '--border': '#1a1200',
+        '--border-bright': '#332600',
+      },
+      title: 'Imperial Bureau Clock',
+      topAurebesh: 'imperial bureau',
+      topLabel: 'IMPERIAL SYSTEMS BUREAU \u2014 SECTOR MONITORING',
+      classification: '\u25C6 CLASSIFIED \u25C6',
+      toggleLabel: 'IMPERIAL',
+      powerLabel: 'SYS POWER',
+      bars: ['MAIN', 'AUX', 'SHLD', 'COMM'],
+      sector: 'K-16 OUTER RIM',
+      unitLabel: 'GARRISON',
+      unitAurebesh: 'garrison',
+      unitInfo: 'UNIT ISB-7742<br>CMDR: CLASSIFIED<br>PERS: 2,847<br>STATUS: ACTIVE',
+      comms: [
+        { name: 'HOLONET', status: 'LINKED' },
+        { name: 'IMPERIAL NET', status: 'SECURE' },
+        { name: 'SUBSPACE', status: 'STANDBY' },
+        { name: 'REBEL FREQ', status: 'JAMMED' },
+      ],
+      scan1: 'SECTOR SCAN',
+      scan2: 'FREQ MONITOR',
+      bottomLeft: 'scanning all frequencies',
+      bottomRight: 'empire forever',
+    },
+    rebel: {
+      colors: {
+        '--primary': '#4da6ff',
+        '--primary-bright': '#80c4ff',
+        '--primary-dim': '#2a7acc',
+        '--primary-faint': '#001a33',
+        '--primary-glow': 'rgba(77, 166, 255, 0.15)',
+        '--primary-glow-strong': 'rgba(77, 166, 255, 0.3)',
+        '--glow-rgb': '77, 166, 255',
+        '--border': '#001220',
+        '--border-bright': '#002a4d',
+      },
+      title: 'Rebel Alliance Clock',
+      topAurebesh: 'rebel alliance',
+      topLabel: 'REBEL INTELLIGENCE \u2014 FIELD OPERATIONS',
+      classification: '\u25C6 EYES ONLY \u25C6',
+      toggleLabel: 'REBEL',
+      powerLabel: 'SYS POWER',
+      bars: ['MAIN', 'AUX', 'SHLD', 'COMM'],
+      sector: 'D-7 YAVIN SECTOR',
+      unitLabel: 'SQUADRON',
+      unitAurebesh: 'squadron',
+      unitInfo: 'UNIT ROGUE-SQD<br>CMDR: CLASSIFIED<br>PERS: 312<br>STATUS: ACTIVE',
+      comms: [
+        { name: 'HOLONET', status: 'TAPPED' },
+        { name: 'REBEL NET', status: 'ENCRYPTED' },
+        { name: 'SUBSPACE', status: 'ACTIVE' },
+        { name: 'IMP FREQ', status: 'MONITORED' },
+      ],
+      scan1: 'PATROL SCAN',
+      scan2: 'IMP TRACKER',
+      bottomLeft: 'may the force be with you',
+      bottomRight: 'hope endures',
+    }
+  };
+
+  // ═══════════════════════════════════════════
+  // THEME ENGINE
+  // ═══════════════════════════════════════════
+  let currentTheme = 'imperial';
+
+  function applyTheme(themeName) {
+    const theme = THEMES[themeName];
+    if (!theme) return;
+    currentTheme = themeName;
+
+    // Apply CSS variables
+    const root = document.documentElement;
+    for (const [prop, val] of Object.entries(theme.colors)) {
+      root.style.setProperty(prop, val);
+    }
+
+    // Update page title
+    document.title = theme.title;
+
+    // Update text content
+    document.getElementById('top-aurebesh').textContent = theme.topAurebesh;
+    document.getElementById('top-label').textContent = theme.topLabel;
+    document.getElementById('classification').innerHTML = theme.classification;
+    document.getElementById('theme-toggle').textContent = theme.toggleLabel;
+
+    // Left panel
+    document.getElementById('power-label').innerHTML = `${theme.powerLabel} <span class="aurebesh">power</span>`;
+    document.getElementById('bar1-label').textContent = theme.bars[0];
+    document.getElementById('bar2-label').textContent = theme.bars[1];
+    document.getElementById('bar3-label').textContent = theme.bars[2];
+    document.getElementById('bar4-label').textContent = theme.bars[3];
+    document.getElementById('sector-text').textContent = theme.sector;
+    document.getElementById('unit-label').innerHTML = `${theme.unitLabel} <span class="aurebesh" id="unit-aurebesh">${theme.unitAurebesh}</span>`;
+    document.getElementById('unit-info').innerHTML = theme.unitInfo;
+
+    // Right panel - comms
+    for (let i = 0; i < 4; i++) {
+      document.getElementById(`comm${i+1}-name`).textContent = theme.comms[i].name;
+      document.getElementById(`comm${i+1}-status`).textContent = theme.comms[i].status;
+    }
+
+    // Bottom bar
+    document.getElementById('scan1-label').textContent = theme.scan1;
+    document.getElementById('scan2-label').textContent = theme.scan2;
+    document.getElementById('bottom-left-aurebesh').textContent = theme.bottomLeft;
+    document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
+
+    // Update URL without reload
+    const url = new URL(window.location);
+    url.searchParams.set('theme', themeName);
+    history.replaceState(null, '', url);
+  }
+
+  function toggleTheme() {
+    applyTheme(currentTheme === 'imperial' ? 'rebel' : 'imperial');
+  }
+
+  // ═══════════════════════════════════════════
+  // CLOCK
+  // ═══════════════════════════════════════════
   const swDays = ['CENTAXDAY', 'TAUNGSDAY', 'ZHELLDAY', 'BENDUDAY', 'PRIMEDAY', 'ATUNDA', 'SATUNDA'];
   const earthDays = ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'];
 
@@ -648,24 +812,19 @@
     document.getElementById('minutes').textContent = pad(now.getMinutes());
     document.getElementById('seconds').textContent = ': ' + pad(now.getSeconds());
 
-    // Date as YYYY.MM.DD
     const y = now.getFullYear();
     const m = pad(now.getMonth() + 1);
     const d = pad(now.getDate());
     document.getElementById('date').textContent = `${y}.${m}.${d}`;
 
-    // Day of week
     const dayIndex = now.getDay();
     document.getElementById('day').textContent = earthDays[dayIndex];
     document.getElementById('day-aurebesh').textContent = swDays[dayIndex].toLowerCase();
 
-    // Sol cycle
     const dayOfYear = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / 86400000);
     const isLeap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
     const totalDays = isLeap ? 366 : 365;
     const rotation = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-
-    // Next shift at 06:00 or 18:00
     let nextShift = now.getHours() < 6 ? '06:00' : now.getHours() < 18 ? '18:00' : '06:00';
     document.getElementById('cycle-info').innerHTML =
       `SOL CYCLE: ${dayOfYear}/${totalDays}<br>ROTATION: ${rotation}<br>NEXT SHIFT: ${nextShift} GST`;
@@ -682,7 +841,7 @@
       `UPTIME ${h.toLocaleString()}:${pad(m)}:${pad(s)}`;
   }
 
-  // Slowly fluctuate sensor values
+  // Sensor fluctuation
   function fluctuateSensors() {
     const sensors = [
       { el: 'sensor-long', val: 'sensor-long-val', base: 78, range: 8 },
@@ -696,7 +855,7 @@
     });
   }
 
-  // Rotate hex cipher block
+  // Hex cipher rotation
   function rotateHex() {
     const chars = '0123456789ABCDEF';
     let lines = [];
@@ -743,14 +902,25 @@
     }
   }
 
-  // Init
+  // ═══════════════════════════════════════════
+  // INIT
+  // ═══════════════════════════════════════════
+  // Read theme from URL param
+  const params = new URLSearchParams(window.location.search);
+  const startTheme = params.get('theme') === 'rebel' ? 'rebel' : 'imperial';
+  applyTheme(startTheme);
+
+  // Toggle button
+  document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
+
+  // Start tickers
   updateClock();
   fetchWeather();
   setInterval(updateClock, 1000);
   setInterval(updateUptime, 1000);
   setInterval(fluctuateSensors, 3000);
   setInterval(rotateHex, 5000);
-  setInterval(fetchWeather, 600000); // refresh weather every 10 min
+  setInterval(fetchWeather, 600000);
 </script>
 </body>
 </html>
