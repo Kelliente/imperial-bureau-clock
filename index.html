@@ -522,10 +522,10 @@
     </div>
 
     <div class="panel-section">
-      <div class="panel-label">THREAT LEVEL <span class="aurebesh">threat</span></div>
-      <div class="readout">
-        <span style="color: var(--amber-dim);">&#9632;&#9632;&#9632;</span><span style="color: var(--border-bright);">&#9632;&#9632;</span>
-        &thinsp;<span class="readout-dim">NOMINAL</span>
+      <div class="panel-label">SURFACE TEMP <span class="aurebesh">weather</span></div>
+      <div class="readout" id="weather-readout">
+        <span style="font-size: 22px; color: var(--amber-bright);" id="temp-value">--°F</span><br>
+        <span class="readout-dim" id="weather-desc">SCANNING...</span>
       </div>
     </div>
 
@@ -712,12 +712,45 @@
     document.getElementById('hex-block').innerHTML = lines.join('<br>');
   }
 
+  // Weather via Open-Meteo (free, no API key)
+  // 37221 = Nashville, TN area: 36.07°N, 86.97°W
+  const WEATHER_LAT = 36.07;
+  const WEATHER_LON = -86.97;
+
+  const WMO_CODES = {
+    0: 'CLEAR SKY', 1: 'MOSTLY CLEAR', 2: 'PARTLY CLOUDY', 3: 'OVERCAST',
+    45: 'FOG', 48: 'RIME FOG',
+    51: 'LIGHT DRIZZLE', 53: 'DRIZZLE', 55: 'HEAVY DRIZZLE',
+    61: 'LIGHT RAIN', 63: 'RAIN', 65: 'HEAVY RAIN',
+    71: 'LIGHT SNOW', 73: 'SNOW', 75: 'HEAVY SNOW',
+    80: 'RAIN SHOWERS', 81: 'MOD SHOWERS', 82: 'HEAVY SHOWERS',
+    95: 'THUNDERSTORM', 96: 'STORM W/ HAIL', 99: 'SEVERE STORM'
+  };
+
+  async function fetchWeather() {
+    try {
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${WEATHER_LAT}&longitude=${WEATHER_LON}&current=temperature_2m,weather_code&temperature_unit=fahrenheit&timezone=America%2FChicago`;
+      const res = await fetch(url);
+      const data = await res.json();
+      const temp = Math.round(data.current.temperature_2m);
+      const code = data.current.weather_code;
+      const desc = WMO_CODES[code] || 'UNKNOWN';
+      document.getElementById('temp-value').textContent = `${temp}\u00B0F`;
+      document.getElementById('weather-desc').textContent = desc;
+    } catch (e) {
+      document.getElementById('temp-value').textContent = '--\u00B0F';
+      document.getElementById('weather-desc').textContent = 'SIGNAL LOST';
+    }
+  }
+
   // Init
   updateClock();
+  fetchWeather();
   setInterval(updateClock, 1000);
   setInterval(updateUptime, 1000);
   setInterval(fluctuateSensors, 3000);
   setInterval(rotateHex, 5000);
+  setInterval(fetchWeather, 600000); // refresh weather every 10 min
 </script>
 </body>
 </html>
