@@ -503,9 +503,7 @@
     height: 192px;
     opacity: 0.25;
     transition: opacity 0.8s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    position: relative;
     margin-bottom: 40px;
   }
   .faction-logo svg {
@@ -513,13 +511,23 @@
     height: 100%;
     fill: var(--primary-dim);
     color: var(--primary-dim);
-    transition: fill 0.8s ease, color 0.8s ease;
+    transition: fill 0.8s ease, color 0.8s ease, opacity 0.5s ease, transform 0.5s ease;
+    position: absolute;
+    top: 0; left: 0;
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
   .faction-logo:hover {
     opacity: 0.5;
   }
   .faction-logo .logo-hidden {
-    display: none;
+    opacity: 0;
+    transform: scale(0.3) rotate(-90deg);
+    pointer-events: none;
+  }
+  .faction-logo .logo-entering {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
   }
 </style>
 </head>
@@ -865,13 +873,17 @@
     document.getElementById('bottom-left-aurebesh').textContent = theme.bottomLeft;
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
-    // Swap faction logos
+    // Swap faction logos with animation
     const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian'];
     logos.forEach(id => {
       const el = document.getElementById(id);
       if (id === 'logo-' + themeName) {
         el.classList.remove('logo-hidden');
+        // Force reflow then add entering class for spin-in
+        void el.offsetWidth;
+        el.classList.add('logo-entering');
       } else {
+        el.classList.remove('logo-entering');
         el.classList.add('logo-hidden');
       }
     });
