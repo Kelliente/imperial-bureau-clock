@@ -1090,27 +1090,19 @@
   }
 
   // Weather via Open-Meteo (free, no API key)
-  // Location: set via URL params ?lat=XX&lon=YY, or auto-detected via IP geolocation
-  // Units: auto-detected from locale (Fahrenheit for US), or override: ?units=f or ?units=c
-  let weatherLat = null;
-  let weatherLon = null;
-
-  // Detect if user likely uses Fahrenheit
-  const userLocale = navigator.language || 'en-US';
+  // Location: auto-detect via IP, or override with URL params ?lat=XX&lon=YY
+  // Units: auto-detect from locale, or override with ?units=f or ?units=c
   const weatherParams = new URLSearchParams(window.location.search);
-  const unitParam = weatherParams.get('units');
-  const useFahrenheit = unitParam ? unitParam.toLowerCase() === 'f'
-    : (userLocale === 'en-US' || userLocale.startsWith('en-US'));
-  const tempUnit = useFahrenheit ? 'fahrenheit' : 'celsius';
-  const tempSymbol = useFahrenheit ? 'F' : 'C';
-
-  // Check for lat/lon URL params first
   const paramLat = parseFloat(weatherParams.get('lat'));
   const paramLon = parseFloat(weatherParams.get('lon'));
-  if (!isNaN(paramLat) && !isNaN(paramLon)) {
-    weatherLat = paramLat;
-    weatherLon = paramLon;
-  }
+  let weatherLat = !isNaN(paramLat) ? paramLat : null;
+  let weatherLon = !isNaN(paramLon) ? paramLon : null;
+  const unitParam = weatherParams.get('units');
+  const useFahrenheit = unitParam ? unitParam.toLowerCase() === 'f' : (navigator.language || '').startsWith('en-US');
+  const tempUnit = useFahrenheit ? 'fahrenheit' : 'celsius';
+  const tempSymbol = useFahrenheit ? 'F' : 'C';
+  // [location auto-detected]°N, 86.97°W
+  // (old hardcoded constants removed)
 
   const WMO_CODES = {
     0: 'CLEAR SKY', 1: 'MOSTLY CLEAR', 2: 'PARTLY CLOUDY', 3: 'OVERCAST',
@@ -1127,27 +1119,26 @@
       fetchWeather();
       return;
     }
-    // Auto-detect location via free IP geolocation (no permission prompt)
-    fetch('https://ipapi.co/json/')
+    fetch('https://get.geojs.io/v1/ip/geo.json')
       .then(r => r.json())
       .then(data => {
-        if (data.latitude && data.longitude) {
-          weatherLat = data.latitude;
-          weatherLon = data.longitude;
+        const lat = parseFloat(data.latitude);
+        const lon = parseFloat(data.longitude);
+        if (!isNaN(lat) && !isNaN(lon)) {
+          weatherLat = lat;
+          weatherLon = lon;
           fetchWeather();
         } else {
-          showNoWeather();
+          document.getElementById('weather-desc').textContent = 'ADD ?lat=XX&lon=YY';
         }
       })
-      .catch(() => showNoWeather());
-  }
-
-  function showNoWeather() {
-    document.getElementById('temp-value').textContent = '--°' + tempSymbol;
-    document.getElementById('weather-desc').textContent = 'ADD ?lat=XX&lon=YY';
+      .catch(() => {
+        document.getElementById('weather-desc').textContent = 'ADD ?lat=XX&lon=YY';
+      });
   }
 
   async function fetchWeather() {
+    if (weatherLat === null || weatherLon === null) return;
     try {
       const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
       const url = `https://api.open-meteo.com/v1/forecast?latitude=${weatherLat}&longitude=${weatherLon}&current=temperature_2m,weather_code&temperature_unit=${tempUnit}&timezone=${encodeURIComponent(tz)}`;
@@ -1156,14 +1147,13 @@
       const temp = Math.round(data.current.temperature_2m);
       const code = data.current.weather_code;
       const desc = WMO_CODES[code] || 'UNKNOWN';
-      document.getElementById('temp-value').textContent = temp + '°' + tempSymbol;
+      document.getElementById('temp-value').textContent = temp + '\u00B0' + tempSymbol;
       document.getElementById('weather-desc').textContent = desc;
     } catch (e) {
-      document.getElementById('temp-value').textContent = '--°' + tempSymbol;
+      document.getElementById('temp-value').textContent = '--\u00B0' + tempSymbol;
       document.getElementById('weather-desc').textContent = 'SIGNAL LOST';
     }
   }
-
 
   // ═══════════════════════════════════════════
   // INIT
