@@ -501,7 +501,7 @@
   .faction-logo {
     width: 192px;
     height: 192px;
-    opacity: 0.25;
+    opacity: 0.5;
     transition: opacity 0.8s ease;
     position: relative;
     margin-bottom: 40px;
@@ -517,7 +517,7 @@
     opacity: 1;
   }
   .faction-logo:hover {
-    opacity: 0.5;
+    opacity: 0.85;
   }
   .faction-logo .logo-hidden {
     opacity: 0;
@@ -714,6 +714,10 @@
       <svg id="logo-rebel" class="logo-hidden" viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
         <path d="M37.035,5.621L31,2l4.715,5.196C39.15,11.074,41,14.744,41,19c0,5.732-3.358,8-7,8c-4.851,0-6-3.783-6-5 c0-3.914,3.548-7.157,6.758-8.288l1.59-0.559l-4.697-4.511c-0.504,0.322-0.856,0.564-0.856,0.564 c-0.418,0.286-1.04,0.766-1.776,1.501c0,0-1.098,1.23-2.02,2.293c0-2,0.357-3.296,0.357-3.296c0.357-1.15,1.036-2.068,1.589-2.67 l0.711-0.704L25.029,2L25,2.025L24.971,2l-4.628,4.328l0.71,0.705c0.552,0.602,1.232,1.52,1.589,2.67C22.643,9.704,23,11,23,13 c-1.172-1.516-2.02-2.293-2.02-2.293c-0.735-0.735-1.357-1.214-1.776-1.501c0,0-0.352-0.242-0.856-0.564l-4.697,4.511l1.59,0.559 C18.452,14.843,22,18.086,22,22c0,1.217-1.149,5-6,5c-3.642,0-7-2.268-7-8c0-4.256,1.85-7.926,5.285-11.804L19,2l-6.035,3.621 C6.467,9.464,2.471,15.942,2,23.462v1.72C2,37.764,12.318,48,25,48c12.682,0,23-10.236,23-22.818v-1.72 C47.529,15.942,43.533,9.464,37.035,5.621z"/>
       </svg>
+      <!-- Fulcrum (Ahsoka Tano) -->
+      <svg id="logo-fulcrum" class="logo-hidden" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <path d="M 15 0 L 13.720703 12.199219 L 10.099609 16 L 13.720703 19.800781 L 15 32 L 15 19 L 12 16 L 15 13 L 15 0 z M 17 0 L 17 13 L 20 16 L 17 19 L 17 32 L 18.279297 19.800781 L 21.900391 16 L 18.279297 12.199219 L 17 0 z M 9.5 7 L 7 10 L 9.5 13 L 12 10 L 9.5 7 z M 22.5 7 L 20 10 L 22.5 13 L 25 10 L 22.5 7 z" style="fill:var(--primary-dim)" />
+      </svg>
       <!-- Mandalorian Mythosaur Skull -->
       <svg id="logo-mandalorian" class="logo-hidden" viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
         <g transform="matrix(1.6652543,0,0,1.6652543,7.1712492,-752.62948)">
@@ -759,15 +763,15 @@
   const THEMES = {
     imperial: {
       colors: {
-        '--primary': '#ff9b21',
-        '--primary-bright': '#ffb84d',
-        '--primary-dim': '#cc7a10',
-        '--primary-faint': '#4a2e00',
-        '--primary-glow': 'rgba(255, 155, 33, 0.15)',
-        '--primary-glow-strong': 'rgba(255, 155, 33, 0.3)',
-        '--glow-rgb': '255, 155, 33',
-        '--border': '#1a1200',
-        '--border-bright': '#332600',
+        '--primary': '#f3a949',
+        '--primary-bright': '#f8c87a',
+        '--primary-dim': '#d4912e',
+        '--primary-faint': '#4a3410',
+        '--primary-glow': 'rgba(243, 169, 73, 0.15)',
+        '--primary-glow-strong': 'rgba(243, 169, 73, 0.3)',
+        '--glow-rgb': '243, 169, 73',
+        '--border': '#1a1400',
+        '--border-bright': '#332a08',
       },
       title: 'Imperial Bureau Clock',
       topAurebesh: 'imperial bureau',
@@ -824,6 +828,40 @@
       scan2: 'IMP TRACKER',
       bottomLeft: 'may the force be with you',
       bottomRight: 'hope endures',
+    },
+    fulcrum: {
+      colors: {
+        '--primary': '#e8792f',
+        '--primary-bright': '#f5a465',
+        '--primary-dim': '#d96526',
+        '--primary-faint': '#2a1508',
+        '--primary-glow': 'rgba(232, 121, 47, 0.15)',
+        '--primary-glow-strong': 'rgba(232, 121, 47, 0.3)',
+        '--glow-rgb': '232, 121, 47',
+        '--border': '#2a1206',
+        '--border-bright': '#4a2510',
+      },
+      title: 'Fulcrum Clock',
+      topAurebesh: 'fulcrum',
+      topLabel: 'FULCRUM NETWORK — COVERT INTELLIGENCE',
+      classification: '◆ EYES ONLY ◆',
+      toggleLabel: 'FULCRUM',
+      powerLabel: 'SYS POWER',
+      bars: ['MAIN', 'AUX', 'SHLD', 'COMM'],
+      sector: 'R-7 OUTER RIM',
+      unitLabel: 'NETWORK',
+      unitAurebesh: 'network',
+      unitInfo: 'AGENT: FULCRUM<br>HANDLER: BAIL ORGANA<br>CELLS: CLASSIFIED<br>STATUS: ACTIVE',
+      comms: [
+        { name: 'HOLONET', status: 'TAPPED' },
+        { name: 'FULCRUM CH', status: 'ENCRYPTED' },
+        { name: 'DEAD DROP', status: 'WAITING' },
+        { name: 'IMP FREQ', status: 'MONITORED' },
+      ],
+      scan1: 'INTEL SCAN',
+      scan2: 'IMP TRACKER',
+      bottomLeft: 'i am no jedi',
+      bottomRight: 'in the shadows',
     },
     mandalorian: {
       colors: {
@@ -977,7 +1015,7 @@
     document.getElementById('bottom-right-aurebesh').textContent = theme.bottomRight;
 
     // Swap faction logos with broadcast static flicker
-    const logos = ['logo-imperial', 'logo-rebel', 'logo-mandalorian', 'logo-vaporwave', 'logo-jedi'];
+    const logos = ['logo-imperial', 'logo-rebel', 'logo-fulcrum', 'logo-mandalorian', 'logo-vaporwave', 'logo-jedi'];
     const activeId = 'logo-' + themeName;
     logos.forEach(id => {
       const el = document.getElementById(id);
@@ -1009,7 +1047,7 @@
     history.replaceState(null, '', url);
   }
 
-  const THEME_ORDER = ['imperial', 'rebel', 'mandalorian', 'vaporwave', 'jedi'];
+  const THEME_ORDER = ['imperial', 'rebel', 'fulcrum', 'mandalorian', 'vaporwave', 'jedi'];
   function toggleTheme() {
     const idx = THEME_ORDER.indexOf(currentTheme);
     const next = THEME_ORDER[(idx + 1) % THEME_ORDER.length];

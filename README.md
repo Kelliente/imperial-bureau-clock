@@ -23,12 +23,13 @@ Alternatively, if you don't want to host it: email yourself the `index.html` fil
 
 ## Themes
 
-Five themes are included. Tap the faction logo in the bottom-right corner to cycle through them, or jump directly via URL parameter:
+Six themes are included. Tap the faction logo in the bottom-right corner to cycle through them, or jump directly via URL parameter:
 
 | Theme | URL param | Color |
 |---|---|---|
 | Imperial | `?theme=imperial` | Amber/orange |
 | Rebel Alliance | `?theme=rebel` | Blue |
+| Fulcrum | `?theme=fulcrum` | Burnt orange |
 | Mandalorian | `?theme=mandalorian` | Green |
 | Phoenix Squadron | `?theme=vaporwave` | Pink |
 | Jedi Temple | `?theme=jedi` | White |
