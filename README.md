@@ -6,7 +6,7 @@ Happy May the 4th.
 
 ## Quick Start
 
-Open `index.html` in any browser. That's it. The clock shows your local time automatically, and weather is detected from your approximate location via IP.
+Open `index.html` in any browser. That's it. The clock shows your local time automatically, and weather is detected from your approximate location via IP. Makes a great homepage or new tab replacer (with extension).
 
 ## Saving to an iPad (or Any Tablet)
 
@@ -19,7 +19,6 @@ The easiest way to run this as a dedicated clock face on an iPad:
 5. Open it from your home screen — it launches fullscreen with no browser chrome, just the clock.
 6. Turn off Auto-Lock in Settings > Display & Brightness to keep it on as a permanent display.
 
-Alternatively, if you don't want to host it: email yourself the `index.html` file, open it on your iPad, and save it to Files. Open it from Files in Safari, then follow steps 3-6 above. Weather won't work from a local file since it needs network access for the API, but the clock and all themes will function.
 
 ## Themes
 
@@ -62,7 +61,6 @@ You can combine parameters:
 ?units=c
 ```
 
-**If weather shows dashes:** The IP geolocation service may be blocked or unavailable. Use the manual `lat`/`lon` parameters as a fix.
 
 ## What Everything on the Screen Means
 
@@ -72,4 +70,4 @@ The text in the angular script is Aurebesh, the Star Wars galaxy's writing syste
 
 ## Credits
 
-Fonts: Aurebesh (CDNFonts), Orbitron, Share Tech Mono (Google Fonts). Faction logos: Icons8, SVG Repo. Weather data: Open-Meteo. Built with plain HTML, CSS, and JavaScript — no frameworks, no build tools.
+Fonts: Aurebesh (CDNFonts), Orbitron, Share Tech Mono (Google Fonts). Faction logos: Icons8, SVG Repo. Weather data: Open-Meteo.
