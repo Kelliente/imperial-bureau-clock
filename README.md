@@ -12,13 +12,14 @@ Open `index.html` in any browser. That's it. The clock shows your local time aut
 
 The easiest way to run this as a dedicated clock face on an iPad:
 
-1. Host the file anywhere accessible by URL. Free options: drop it in a GitHub repo and enable GitHub Pages, deploy to Netlify or Vercel, or use any static file host.
+1. Host the file anywhere accessible by URL. Free options: drop it in a GitHub repo and enable GitHub Pages, deploy to Netlify or Vercel, run a local server, or use any static file host.
 2. Open the URL in Safari on your iPad.
 3. Tap the **Share** button (square with arrow), then tap **Add to Home Screen**.
 4. Name it whatever you want and tap **Add**.
 5. Open it from your home screen — it launches fullscreen with no browser chrome, just the clock.
 6. Turn off Auto-Lock in Settings > Display & Brightness to keep it on as a permanent display.
 
+You can also use it as your homepage/new tab base. (Note that many browsers don't allow locally-hosted files as new tab unless you use a special extension). 
 
 ## Themes
 
