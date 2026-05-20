@@ -19,7 +19,8 @@ The easiest way to run this as a dedicated clock face on an iPad:
 5. Open it from your home screen — it launches fullscreen with no browser chrome, just the clock.
 6. Turn off Auto-Lock in Settings > Display & Brightness to keep it on as a permanent display.
 
-You can also use it as your homepage/new tab base. (Note that many browsers don't allow locally-hosted files as new tab unless you use a special extension). 
+Also works great as a homepage/new tab base. 
+Note: iPads don't like to run local files, so you'll need to host or run on a local server. Many browsers require an extension to set a custom new tab. 
 
 ## Themes
 
